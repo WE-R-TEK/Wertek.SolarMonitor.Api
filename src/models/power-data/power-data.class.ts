@@ -39,6 +39,18 @@ export class PowerData {
   yuaub: number;
   yuauc: number;
   yubuc: number;
+  kwhAPer: number;
+  kwhBPer: number;
+  kwhCPer: number;
+  kwhTPer: number;
+  kwhAConAcum: number;
+  kwhBConAcum: number;
+  kwhCConAcum: number;
+  kwhTConAcum: number;
+  kwhAGerAcum: number;
+  kwhBGerAcum: number;
+  kwhCGerAcum: number;
+  kwhTGerAcum: number;
 
   constructor(data: any) {
     this.pa = Number(data.pa || 0);
