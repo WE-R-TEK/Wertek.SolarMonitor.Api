@@ -89,25 +89,25 @@ export class AppController {
     get(ref(database, sumPath)).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        data.kwhAConAcum += dataF.kwhAConAcum;
-        data.kwhBConAcum += dataF.kwhBConAcum;
-        data.kwhCConAcum += dataF.kwhCConAcum;
-        data.kwhTConAcum += dataF.kwhTConAcum;
-        data.kwhAGerAcum += dataF.kwhAGerAcum;
-        data.kwhBGerAcum += dataF.kwhBGerAcum;
-        data.kwhCGerAcum += dataF.kwhCGerAcum;
-        data.kwhTGerAcum += dataF.kwhTGerAcum;
+        data.kwhAConAcum += dataF.kwhAPer >= 0 ? dataF.kwhAPer : 0;
+        data.kwhBConAcum += dataF.kwhBPer >= 0 ? dataF.kwhBPer : 0;
+        data.kwhCConAcum += dataF.kwhCPer >= 0 ? dataF.kwhCPer : 0;
+        data.kwhTConAcum += dataF.kwhTPer >= 0 ? dataF.kwhTPer : 0;
+        data.kwhAGerAcum += dataF.kwhAPer < 0 ? dataF.kwhAPer * -1 : 0;
+        data.kwhBGerAcum += dataF.kwhBPer < 0 ? dataF.kwhBPer * -1 : 0;
+        data.kwhCGerAcum += dataF.kwhCPer < 0 ? dataF.kwhCPer * -1 : 0;
+        data.kwhTGerAcum += dataF.kwhTPer < 0 ? dataF.kwhTPer * -1 : 0;
         set(ref(database, sumPath), data);
       } else {
         set(ref(database, sumPath), {
-          kwhAConAcum: dataF.kwhAConAcum,
-          kwhBConAcum: dataF.kwhBConAcum,
-          kwhCConAcum: dataF.kwhCConAcum,
-          kwhTConAcum: dataF.kwhTConAcum,
-          kwhAGerAcum: dataF.kwhAGerAcum,
-          kwhBGerAcum: dataF.kwhBGerAcum,
-          kwhCGerAcum: dataF.kwhCGerAcum,
-          kwhTGerAcum: dataF.kwhTGerAcum,
+          kwhAConAcum: dataF.kwhAPer >= 0 ? dataF.kwhAPer : 0,
+          kwhBConAcum: dataF.kwhBPer >= 0 ? dataF.kwhBPer : 0,
+          kwhCConAcum: dataF.kwhCPer >= 0 ? dataF.kwhCPer : 0,
+          kwhTConAcum: dataF.kwhTPer >= 0 ? dataF.kwhTPer : 0,
+          kwhAGerAcum: dataF.kwhAPer < 0 ? dataF.kwhAPer * -1 : 0,
+          kwhBGerAcum: dataF.kwhBPer < 0 ? dataF.kwhBPer * -1 : 0,
+          kwhCGerAcum: dataF.kwhCPer < 0 ? dataF.kwhCPer * -1 : 0,
+          kwhTGerAcum: dataF.kwhTPer < 0 ? dataF.kwhTPer * -1 : 0,
         });
       }
     });
