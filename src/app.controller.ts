@@ -24,10 +24,10 @@ export class AppController {
     const dataF = new PowerData(data);
 
     // CALCULA KWH
-    dataF.kwhAPer = ((dataF.pa / 1000) * (30 / 60)) / 60;
-    dataF.kwhBPer = ((dataF.pb / 1000) * (30 / 60)) / 60;
-    dataF.kwhCPer = ((dataF.pc / 1000) * (30 / 60)) / 60;
-    dataF.kwhTPer = ((dataF.pt / 1000) * (30 / 60)) / 60;
+    dataF.kwhAPer = (dataF.pa / 1000) * (30 / 60 / 60);
+    dataF.kwhBPer = (dataF.pb / 1000) * (30 / 60 / 60);
+    dataF.kwhCPer = (dataF.pc / 1000) * (30 / 60 / 60);
+    dataF.kwhTPer = (dataF.pt / 1000) * (30 / 60 / 60);
 
     const lastSum = await get(
       ref(database, `user_identity/${year}/${month}/${day}/sum`),
