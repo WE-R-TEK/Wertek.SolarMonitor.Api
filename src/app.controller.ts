@@ -23,57 +23,43 @@ export class AppController {
     const hour = momentum.format('YYYY-MM-DD HH:mm:ss');
     const dataF = new PowerData(data);
 
-    // CALCULA KWH
-    dataF.kwhAPer = (dataF.pa / 1000) * (30 / 60 / 60);
-    dataF.kwhBPer = (dataF.pb / 1000) * (30 / 60 / 60);
-    dataF.kwhCPer = (dataF.pc / 1000) * (30 / 60 / 60);
-    dataF.kwhTPer = (dataF.pt / 1000) * (30 / 60 / 60);
-
     const lastSum = await get(
       ref(database, `user_identity/${year}/${month}/${day}/sum`),
     );
     if (lastSum.exists()) {
-      dataF.kwhAConAcum =
-        dataF.kwhAPer >= 0
-          ? lastSum.val().kwhAConAcum + dataF.kwhAPer
-          : lastSum.val().kwhAConAcum;
-      dataF.kwhBConAcum =
-        dataF.kwhBPer >= 0
-          ? lastSum.val().kwhBConAcum + dataF.kwhBPer
-          : lastSum.val().kwhBConAcum;
-      dataF.kwhCConAcum =
-        dataF.kwhCPer >= 0
-          ? lastSum.val().kwhCConAcum + dataF.kwhCPer
-          : lastSum.val().kwhCConAcum;
-      dataF.kwhTConAcum =
-        dataF.kwhTPer >= 0
-          ? lastSum.val().kwhTConAcum + dataF.kwhTPer
-          : lastSum.val().kwhTConAcum;
-      dataF.kwhAGerAcum =
-        dataF.kwhAPer < 0
-          ? lastSum.val().kwhAGerAcum + dataF.kwhAPer * -1
-          : lastSum.val().kwhAGerAcum;
-      dataF.kwhBGerAcum =
-        dataF.kwhBPer < 0
-          ? lastSum.val().kwhBGerAcum + dataF.kwhBPer * -1
-          : lastSum.val().kwhBGerAcum;
-      dataF.kwhCGerAcum =
-        dataF.kwhCPer < 0
-          ? lastSum.val().kwhCGerAcum + dataF.kwhCPer * -1
-          : lastSum.val().kwhCGerAcum;
-      dataF.kwhTGerAcum =
-        dataF.kwhTPer < 0
-          ? lastSum.val().kwhTGerAcum + dataF.kwhTPer * -1
-          : lastSum.val().kwhTGerAcum;
+      dataF.kwhAPer = dataF.epa_c - lastSum.val().epa_c;
+      dataF.kwhBPer = dataF.epb_c - lastSum.val().epb_c;
+      dataF.kwhCPer = dataF.epc_c - lastSum.val().epc_c;
+      dataF.kwhTPer = dataF.ept_c - lastSum.val().ept_c;
+      dataF.kwhAGerPer = dataF.epa_g - lastSum.val().epa_g;
+      dataF.kwhBGerPer = dataF.epb_g - lastSum.val().epb_g;
+      dataF.kwhCGerPer = dataF.epc_g - lastSum.val().epc_g;
+      dataF.kwhTGerPer = dataF.ept_g - lastSum.val().ept_g;
+      dataF.kwhAConAcum = lastSum.val().kwhAConAcum + dataF.kwhAPer;
+      dataF.kwhBConAcum = lastSum.val().kwhBConAcum + dataF.kwhBPer;
+      dataF.kwhCConAcum = lastSum.val().kwhCConAcum + dataF.kwhCPer;
+      dataF.kwhTConAcum = lastSum.val().kwhTConAcum + dataF.kwhTPer;
+      dataF.kwhAGerAcum = lastSum.val().kwhAGerAcum + dataF.kwhAGerPer;
+      dataF.kwhBGerAcum = lastSum.val().kwhBGerAcum + dataF.kwhBGerPer;
+      dataF.kwhCGerAcum = lastSum.val().kwhCGerAcum + dataF.kwhCGerPer;
+      dataF.kwhTGerAcum = lastSum.val().kwhTGerAcum + dataF.kwhTGerPer;
     } else {
-      dataF.kwhAConAcum = dataF.kwhAPer >= 0 ? dataF.kwhAPer : 0;
-      dataF.kwhBConAcum = dataF.kwhBPer >= 0 ? dataF.kwhBPer : 0;
-      dataF.kwhCConAcum = dataF.kwhCPer >= 0 ? dataF.kwhCPer : 0;
-      dataF.kwhTConAcum = dataF.kwhTPer >= 0 ? dataF.kwhTPer : 0;
-      dataF.kwhAGerAcum = dataF.kwhAPer < 0 ? dataF.kwhAPer * -1 : 0;
-      dataF.kwhBGerAcum = dataF.kwhBPer < 0 ? dataF.kwhBPer * -1 : 0;
-      dataF.kwhCGerAcum = dataF.kwhCPer < 0 ? dataF.kwhCPer * -1 : 0;
-      dataF.kwhTGerAcum = dataF.kwhTPer < 0 ? dataF.kwhTPer * -1 : 0;
+      dataF.kwhAPer = 0;
+      dataF.kwhBPer = 0;
+      dataF.kwhCPer = 0;
+      dataF.kwhTPer = 0;
+      dataF.kwhAGerPer = 0;
+      dataF.kwhBGerPer = 0;
+      dataF.kwhCGerPer = 0;
+      dataF.kwhTGerPer = 0;
+      dataF.kwhAConAcum = 0;
+      dataF.kwhBConAcum = 0;
+      dataF.kwhCConAcum = 0;
+      dataF.kwhTConAcum = 0;
+      dataF.kwhAGerAcum = 0;
+      dataF.kwhBGerAcum = 0;
+      dataF.kwhCGerAcum = 0;
+      dataF.kwhTGerAcum = 0;
     }
 
     set(ref(database, `user_identity/${year}/${month}/${day}/${hour}`), dataF);
@@ -89,25 +75,41 @@ export class AppController {
     get(ref(database, sumPath)).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        data.kwhAConAcum += dataF.kwhAPer >= 0 ? dataF.kwhAPer : 0;
-        data.kwhBConAcum += dataF.kwhBPer >= 0 ? dataF.kwhBPer : 0;
-        data.kwhCConAcum += dataF.kwhCPer >= 0 ? dataF.kwhCPer : 0;
-        data.kwhTConAcum += dataF.kwhTPer >= 0 ? dataF.kwhTPer : 0;
-        data.kwhAGerAcum += dataF.kwhAPer < 0 ? dataF.kwhAPer * -1 : 0;
-        data.kwhBGerAcum += dataF.kwhBPer < 0 ? dataF.kwhBPer * -1 : 0;
-        data.kwhCGerAcum += dataF.kwhCPer < 0 ? dataF.kwhCPer * -1 : 0;
-        data.kwhTGerAcum += dataF.kwhTPer < 0 ? dataF.kwhTPer * -1 : 0;
+        data.epa_c = dataF.epa_c;
+        data.epb_c = dataF.epb_c;
+        data.epc_c = dataF.epc_c;
+        data.ept_c = dataF.ept_c;
+        data.epa_g = dataF.epa_g;
+        data.epb_g = dataF.epb_g;
+        data.epc_g = dataF.epc_g;
+        data.ept_g = dataF.ept_g;
+        data.kwhAConAcum += dataF.kwhAPer;
+        data.kwhBConAcum += dataF.kwhBPer;
+        data.kwhCConAcum += dataF.kwhCPer;
+        data.kwhTConAcum += dataF.kwhTPer;
+        data.kwhAGerAcum += dataF.kwhAGerPer;
+        data.kwhBGerAcum += dataF.kwhBGerPer;
+        data.kwhCGerAcum += dataF.kwhCGerPer;
+        data.kwhTGerAcum += dataF.kwhTGerPer;
         set(ref(database, sumPath), data);
       } else {
         set(ref(database, sumPath), {
-          kwhAConAcum: dataF.kwhAPer >= 0 ? dataF.kwhAPer : 0,
-          kwhBConAcum: dataF.kwhBPer >= 0 ? dataF.kwhBPer : 0,
-          kwhCConAcum: dataF.kwhCPer >= 0 ? dataF.kwhCPer : 0,
-          kwhTConAcum: dataF.kwhTPer >= 0 ? dataF.kwhTPer : 0,
-          kwhAGerAcum: dataF.kwhAPer < 0 ? dataF.kwhAPer * -1 : 0,
-          kwhBGerAcum: dataF.kwhBPer < 0 ? dataF.kwhBPer * -1 : 0,
-          kwhCGerAcum: dataF.kwhCPer < 0 ? dataF.kwhCPer * -1 : 0,
-          kwhTGerAcum: dataF.kwhTPer < 0 ? dataF.kwhTPer * -1 : 0,
+          epa_c: dataF.epa_c,
+          epb_c: dataF.epb_c,
+          epc_c: dataF.epc_c,
+          ept_c: dataF.ept_c,
+          epa_g: dataF.epa_g,
+          epb_g: dataF.epb_g,
+          epc_g: dataF.epc_g,
+          ept_g: dataF.ept_g,
+          kwhAConAcum: 0,
+          kwhBConAcum: 0,
+          kwhCConAcum: 0,
+          kwhTConAcum: 0,
+          kwhAGerAcum: 0,
+          kwhBGerAcum: 0,
+          kwhCGerAcum: 0,
+          kwhTGerAcum: 0,
         });
       }
     });

@@ -43,6 +43,10 @@ export class PowerData {
   kwhBPer: number;
   kwhCPer: number;
   kwhTPer: number;
+  kwhAGerPer: number;
+  kwhBGerPer: number;
+  kwhCGerPer: number;
+  kwhTGerPer: number;
   kwhAConAcum: number;
   kwhBConAcum: number;
   kwhCConAcum: number;
