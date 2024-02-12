@@ -33,6 +33,14 @@ export class AppController {
     let last_epb_g = 0;
     let last_epc_g = 0;
     let last_ept_g = 0;
+    dataF.kwhAPer = 0;
+    dataF.kwhBPer = 0;
+    dataF.kwhCPer = 0;
+    dataF.kwhTPer = 0;
+    dataF.kwhAGerPer = 0;
+    dataF.kwhBGerPer = 0;
+    dataF.kwhCGerPer = 0;
+    dataF.kwhTGerPer = 0;
     if (now.exists()) {
       last_epa_c = now.val().epa_c;
       last_epb_c = now.val().epb_c;
@@ -42,16 +50,15 @@ export class AppController {
       last_epb_g = now.val().epb_g;
       last_epc_g = now.val().epc_g;
       last_ept_g = now.val().ept_g;
+      dataF.kwhAPer = dataF.epa_c - last_epa_c;
+      dataF.kwhBPer = dataF.epb_c - last_epb_c;
+      dataF.kwhCPer = dataF.epc_c - last_epc_c;
+      dataF.kwhTPer = dataF.ept_c - last_ept_c;
+      dataF.kwhAGerPer = dataF.epa_g - last_epa_g;
+      dataF.kwhBGerPer = dataF.epb_g - last_epb_g;
+      dataF.kwhCGerPer = dataF.epc_g - last_epc_g;
+      dataF.kwhTGerPer = dataF.ept_g - last_ept_g;
     }
-
-    dataF.kwhAPer = dataF.epa_c - last_epa_c;
-    dataF.kwhBPer = dataF.epb_c - last_epb_c;
-    dataF.kwhCPer = dataF.epc_c - last_epc_c;
-    dataF.kwhTPer = dataF.ept_c - last_ept_c;
-    dataF.kwhAGerPer = dataF.epa_g - last_epa_g;
-    dataF.kwhBGerPer = dataF.epb_g - last_epb_g;
-    dataF.kwhCGerPer = dataF.epc_g - last_epc_g;
-    dataF.kwhTGerPer = dataF.ept_g - last_ept_g;
 
     const lastSum = await get(
       ref(database, `user_identity/${year}/${month}/${day}/sum`),
