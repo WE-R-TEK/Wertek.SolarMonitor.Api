@@ -20,7 +20,9 @@ export class AppController {
     const year = momentum.format('YYYY');
     const month = momentum.format('YYYY-MM');
     const day = momentum.format('YYYY-MM-DD');
-    const hour = momentum.format('YYYY-MM-DD HH:mm:ss');
+    const hour = momentum.format('YYYY-MM-DD HH');
+    const min = momentum.format('YYYY-MM-DD HH:mm');
+    const sec = momentum.format('YYYY-MM-DD HH:mm:ss');
     const dataF = new PowerData(data);
 
     //Obtem ultima leitura armazenda
@@ -83,10 +85,24 @@ export class AppController {
       dataF.kwhTGerAcum = dataF.kwhTGerPer;
     }
 
-    set(ref(database, `user_identity/${year}/${month}/${day}/${hour}`), dataF);
+    set(
+      ref(
+        database,
+        `user_identity/${year}/${month}/${day}/${hour}/${min}/${sec}`,
+      ),
+      dataF,
+    );
     set(ref(database, 'user_identity/now'), dataF);
 
     // UPDATE UPPER LEVEL WITH SUM OF ALL DATA
+    this.updateParentSum(
+      `user_identity/${year}/${month}/${day}/${hour}/${min}/sum`,
+      dataF,
+    );
+    this.updateParentSum(
+      `user_identity/${year}/${month}/${day}/${hour}/sum`,
+      dataF,
+    );
     this.updateParentSum(`user_identity/${year}/${month}/${day}/sum`, dataF);
     this.updateParentSum(`user_identity/${year}/${month}/sum`, dataF);
     this.updateParentSum(`user_identity/${year}/sum`, dataF);
