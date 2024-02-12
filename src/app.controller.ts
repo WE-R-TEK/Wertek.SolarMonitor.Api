@@ -111,7 +111,8 @@ export class AppController {
   private async updateParentSum(sumPath: string, dataF: PowerData) {
     get(ref(database, sumPath)).then((snapshot) => {
       if (snapshot.exists()) {
-        const data = snapshot.val();
+        let data = snapshot.val();
+        data = { ...data, ...dataF };
         data.kwhAConAcum += dataF.kwhAPer;
         data.kwhBConAcum += dataF.kwhBPer;
         data.kwhCConAcum += dataF.kwhCPer;
@@ -123,6 +124,7 @@ export class AppController {
         set(ref(database, sumPath), data);
       } else {
         set(ref(database, sumPath), {
+          ...dataF,
           kwhAConAcum: dataF.kwhAPer,
           kwhBConAcum: dataF.kwhBPer,
           kwhCConAcum: dataF.kwhCPer,
