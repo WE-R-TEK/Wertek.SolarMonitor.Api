@@ -1,0 +1,19 @@
+influx - AWS
+
+http://52.40.160.15:8086
+
+user admin
+pass hijgi6-wakSyr-tyzxos
+
+token t0pXMZx_QvwnZ5rXHP502L6xm-xCGKmZCFcOz_hUYaCrbdAJgrwupYcYkSaLf967PVEMc-dJ6MqtFpUlwPUQiA==
+
+
+Restart
+sudo service influxdb restart
+Stop
+sudo service influxdb stop
+
+
+service
+
+pm2 start 0
