@@ -5,23 +5,29 @@ import { get, ref, set } from 'firebase/database';
 //import * as moment from 'moment-timezone';
 import { PowerData } from './models/power-data/power-data.class';
 import { InfluxDB, Point } from '@influxdata/influxdb-client';
+import { EventGateway } from './gateway/event/event.gateway';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly eventGateway: EventGateway,
+  ) {}
 
   @Get()
   getHello(): string {
-    //     const token = process.env.INFLUXDB_TOKEN;
-    //     console.log(token);
-    //     const url = 'http://52.40.160.15:8086';
+    this.eventGateway.server.emit('events', 'Hello from the server');
 
-    //     const client = new InfluxDB({ url, token });
+    const token = process.env.INFLUXDB_TOKEN;
+    console.log(token);
+    const url = 'http://52.40.160.15:8086';
+
+    const client = new InfluxDB({ url, token });
 
     //     //WRITE
 
-    //     const org = `wertek`;
-    //     const bucket = `solarmonitor`;
+    const org = `wertek`;
+    //const bucket = `solarmonitor`;
 
     //     const writeClient = client.getWriteApi(org, bucket, 'ns');
 
@@ -41,23 +47,31 @@ export class AppController {
 
     //     //READ DATA
 
-    //     let queryClient = client.getQueryApi(org);
-    //     let fluxQuery = `from(bucket: "solarmonitor")
-    //  |> range(start: -10m)
-    //  |> filter(fn: (r) => r._measurement == "measurement1")`;
+    const queryClient = client.getQueryApi(org);
+    const fluxQuery = `data = () => from(bucket: "solarmonitor")
+		|> range(start: 2024-02-13T00:00:00Z)
+		|> filter(fn: (r) => r._measurement == "powerdata" and r._field == "ept_g")
+	  
+	  first = data() |> first()
+	  last = data() |> last()
+	  
+	  dayResult = union(tables: [first, last])
+		|> difference()
+	  
+	  union( tables: [dayResult,last])`;
 
-    //     queryClient.queryRows(fluxQuery, {
-    //       next: (row, tableMeta) => {
-    //         const tableObject = tableMeta.toObject(row);
-    //         console.log(tableObject);
-    //       },
-    //       error: (error) => {
-    //         console.error('\nError', error);
-    //       },
-    //       complete: () => {
-    //         console.log('\nSuccess');
-    //       },
-    //     });
+    queryClient.queryRows(fluxQuery, {
+      next: (row, tableMeta) => {
+        const tableObject = tableMeta.toObject(row);
+        console.log(row, tableObject);
+      },
+      error: (error) => {
+        console.error('\nError', error);
+      },
+      complete: () => {
+        console.log('\nSuccess');
+      },
+    });
 
     //     //AGGREGRATE DATA
     //     queryClient = client.getQueryApi(org);
@@ -95,7 +109,6 @@ export class AppController {
 
     const token =
       'ZgzULOOA4gARxR7mxs3qGEwpC_rUzZkunLaxPTcA6iTl1yWpu0Mob_CYxHKLCAFqUyZE8WfcjAnY9c73St_9Kg==';
-    console.log(token);
     const url = 'http://52.40.160.15:8086';
 
     const client = new InfluxDB({ url, token });
@@ -151,7 +164,9 @@ export class AppController {
       .floatField('yubuc', dataF.yubuc);
 
     writeClient.writePoint(point);
-    writeClient.flush();
+    await writeClient.flush();
+
+    this.eventGateway.server.emit('events', 'Hello from the server');
     // //Obtem ultima leitura armazenda
     // const now = await get(ref(database, 'user_identity/now'));
     // let last_epa_c = 0;
