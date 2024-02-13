@@ -148,23 +148,7 @@ export class AppController {
       .floatField('tpsd', dataF.tpsd)
       .floatField('yuaub', dataF.yuaub)
       .floatField('yuauc', dataF.yuauc)
-      .floatField('yubuc', dataF.yubuc)
-      .floatField('kwhAPer', dataF.kwhAPer)
-      .floatField('kwhBPer', dataF.kwhBPer)
-      .floatField('kwhCPer', dataF.kwhCPer)
-      .floatField('kwhTPer', dataF.kwhTPer)
-      .floatField('kwhAGerPer', dataF.kwhAGerPer)
-      .floatField('kwhBGerPer', dataF.kwhBGerPer)
-      .floatField('kwhCGerPer', dataF.kwhCGerPer)
-      .floatField('kwhTGerPer', dataF.kwhTGerPer)
-      .floatField('kwhAConAcum', dataF.kwhAConAcum)
-      .floatField('kwhBConAcum', dataF.kwhBConAcum)
-      .floatField('kwhCConAcum', dataF.kwhCConAcum)
-      .floatField('kwhTConAcum', dataF.kwhTConAcum)
-      .floatField('kwhAGerAcum', dataF.kwhAGerAcum)
-      .floatField('kwhBGerAcum', dataF.kwhBGerAcum)
-      .floatField('kwhCGerAcum', dataF.kwhCGerAcum)
-      .floatField('kwhTGerAcum', dataF.kwhTGerAcum);
+      .floatField('yubuc', dataF.yubuc);
 
     writeClient.writePoint(point);
     writeClient.flush();
