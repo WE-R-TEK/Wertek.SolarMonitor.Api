@@ -17,3 +17,5 @@ sudo service influxdb stop
 service
 
 pm2 start 0
+
+git hash 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
