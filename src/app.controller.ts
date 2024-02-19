@@ -171,8 +171,10 @@ export class AppController {
   }
 
   private async extractSolarData() {
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     try {
-      const browser = await puppeteer.launch();
       const page = await browser.newPage();
 
       await page.goto('http://solar-monitoramento.intelbras.com.br/login');
@@ -195,9 +197,7 @@ export class AppController {
         return dataElement?.textContent ?? null;
       });
 
-      console.log(`Extracted data: ${data}`);
-
-      await browser.close();
+      //console.log(`Extracted data: ${data}`);
 
       const token =
         'ZgzULOOA4gARxR7mxs3qGEwpC_rUzZkunLaxPTcA6iTl1yWpu0Mob_CYxHKLCAFqUyZE8WfcjAnY9c73St_9Kg==';
@@ -212,14 +212,39 @@ export class AppController {
 
       const writeClient = client.getWriteApi(org, bucket, 'ns');
 
+      const fluxQuery = `from(bucket: "solarmonitor")
+        |> range(start: -15m)
+        |> filter(fn: (r) => r._measurement == "solardata" and r._field == "total")
+        |> last()`;
+
+      const queryClient = client.getQueryApi(org);
+
+      const last = await queryClient.collectRows(fluxQuery, (row, tableMeta) =>
+        tableMeta.toObject(row),
+      );
+
+      let lastValue = 0;
+
+      if (last.length > 0) {
+        lastValue = last[0]['_value'];
+      }
+
+      const ger_per = Number(data) - Number(lastValue);
+      const total_dia = Number(data);
+      const total = Number(lastValue) + ger_per;
+
       const point = new Point('solardata')
         .tag('user', 'user_identity')
-        .floatField('total', data);
+        .floatField('total', total)
+        .floatField('total_dia', total_dia)
+        .floatField('ger_per', ger_per);
 
       writeClient.writePoint(point);
       await writeClient.flush();
     } catch (error) {
       console.error('Error extracting solar data', error);
+    } finally {
+      await browser.close();
     }
   }
 }
