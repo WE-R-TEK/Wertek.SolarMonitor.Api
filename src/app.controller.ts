@@ -213,7 +213,7 @@ export class AppController {
       const writeClient = client.getWriteApi(org, bucket, 'ns');
 
       const fluxQuery = `from(bucket: "solarmonitor")
-        |> range(start: -15m)
+        |> range(start: -48h)
         |> filter(fn: (r) => r._measurement == "solardata" and r._field == "total")
         |> last()`;
 
