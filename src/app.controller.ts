@@ -213,9 +213,10 @@ export class AppController {
       const writeClient = client.getWriteApi(org, bucket, 'ns');
 
       const fluxQuery = `from(bucket: "solarmonitor")
-        |> range(start: -48h)
-        |> filter(fn: (r) => r._measurement == "solardata" and r._field == "total")
-        |> last()`;
+	  |> range(start: -48h)
+	  |> filter(fn: (r) => r._measurement == "solardata" )
+	  |> last()
+	  |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")`;
 
       const queryClient = client.getQueryApi(org);
 
@@ -223,15 +224,17 @@ export class AppController {
         tableMeta.toObject(row),
       );
 
-      let lastValue = 0;
+      let lastTotal = 0;
+      let lastDia = 0;
 
       if (last.length > 0) {
-        lastValue = last[0]['_value'];
+        lastTotal = last[0]['total'];
+        lastDia = last[0]['total_dia'];
       }
 
-      const ger_per = Number(data) - Number(lastValue);
+      const ger_per = Number(data) - Number(lastDia);
       const total_dia = Number(data);
-      const total = Number(lastValue) + ger_per;
+      const total = Number(lastTotal) + (ger_per < 0 ? 0 : ger_per);
 
       const point = new Point('solardata')
         .tag('user', 'user_identity')
