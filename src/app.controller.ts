@@ -19,7 +19,7 @@ export class AppController {
 
     const token = process.env.INFLUXDB_TOKEN;
     console.log(token);
-    const url = 'http://52.40.160.15:8086';
+    const url = 'http://localhost:8086';
 
     const client = new InfluxDB({ url, token });
 
@@ -108,7 +108,7 @@ export class AppController {
 
     const token =
       'ZgzULOOA4gARxR7mxs3qGEwpC_rUzZkunLaxPTcA6iTl1yWpu0Mob_CYxHKLCAFqUyZE8WfcjAnY9c73St_9Kg==';
-    const url = 'http://52.40.160.15:8086';
+    const url = 'http://localhost:8086';
 
     const client = new InfluxDB({ url, token });
 
@@ -201,7 +201,7 @@ export class AppController {
 
       const token =
         'ZgzULOOA4gARxR7mxs3qGEwpC_rUzZkunLaxPTcA6iTl1yWpu0Mob_CYxHKLCAFqUyZE8WfcjAnY9c73St_9Kg==';
-      const url = 'http://52.40.160.15:8086';
+      const url = 'http://localhost:8086';
 
       const client = new InfluxDB({ url, token });
 

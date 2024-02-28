@@ -19,3 +19,23 @@ service
 pm2 start 0
 
 git hash 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
+
+
+
+DEPLOY ANGULAR
+
+* tar czf deploy.tgz *
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo rm -r /var/www/public/power.we-rtek.com/*"
+* scp -i solar-monitor-api.pem ../dist/solar-monitor-web/browser/deploy.tgz ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com:/var/www/public/power.we-rtek.com
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo tar -xzf /var/www/public/power.we-rtek.com/deploy.tgz -C /var/www/public/power.we-rtek.com/"
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo rm /var/www/public/power.we-rtek.com/deploy.tgz"
+
+DEPLOY API
+
+* tar czf deploy.tgz *
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo rm -r /var/www/public/api-power.we-rtek.com/*"
+* scp -i solar-monitor-api.pem ../dist/deploy.tgz ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com:/var/www/public/api-power.we-rtek.com
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo tar -xzf /var/www/public/api-power.we-rtek.com/deploy.tgz -C /var/www/public/api-power.we-rtek.com/"
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo rm /var/www/public/api-power.we-rtek.com/deploy.tgz"
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "cd /var/www/public/api-power.we-rtek.com/ && sudo npm install --only=production"
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo pm2 start 11"
