@@ -17,11 +17,14 @@ export class PowerTaxValue extends Model {
   date: Date;
 
   @Column
-  tusde: number;
+  tusd_fornecida: number;
 
   @Column
-  tusd: number;
+  te_fornecida: number;
 
   @Column
-  te: number;
+  tusd_injetada: number;
+
+  @Column
+  te_injetada: number;
 }

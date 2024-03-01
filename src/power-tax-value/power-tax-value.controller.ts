@@ -30,6 +30,33 @@ export class PowerTaxValueController {
     return this.powerTaxValueService.findOne(+id);
   }
 
+  @Get('year/:year/month/:month')
+  findByMonthAndYear(
+    @Param('year') year: number,
+    @Param('month') month: number,
+  ) {
+    console.log('year', year, 'month', month);
+    return this.powerTaxValueService.findByMonthAndYear(year, month);
+  }
+
+  @Post('year/:year/month/:month')
+  updateByMonthAndYear(
+    @Param('year') year: number,
+    @Param('month') month: number,
+    @Body() updatePowerTaxValueDto: UpdatePowerTaxValueDto,
+  ) {
+    const powerTaxValue = this.powerTaxValueService.findByMonthAndYear(
+      year,
+      month,
+    );
+    return this.powerTaxValueService.updateOrInsert({
+      ...updatePowerTaxValueDto,
+      year,
+      month,
+      id: powerTaxValue['id'],
+    });
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

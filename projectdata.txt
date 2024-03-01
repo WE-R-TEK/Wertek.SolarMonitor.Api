@@ -33,9 +33,35 @@ DEPLOY ANGULAR
 DEPLOY API
 
 * tar czf deploy.tgz *
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo pm2 stop 0"
 * ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo rm -r /var/www/public/api-power.we-rtek.com/*"
 * scp -i solar-monitor-api.pem ../dist/deploy.tgz ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com:/var/www/public/api-power.we-rtek.com
 * ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo tar -xzf /var/www/public/api-power.we-rtek.com/deploy.tgz -C /var/www/public/api-power.we-rtek.com/"
 * ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo rm /var/www/public/api-power.we-rtek.com/deploy.tgz"
 * ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "cd /var/www/public/api-power.we-rtek.com/ && sudo npm install --only=production"
-* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo pm2 start 11"
+* ssh -i solar-monitor-api.pem ubuntu@ec2-54-68-63-227.us-west-2.compute.amazonaws.com "sudo pm2 start 0"
+
+
+CERTBOT E NGINX
+
+* https://medium.com/@fish_underlings/configuring-a-production-nestjs-project-for-ubuntu-20-04-16989bc6c594
+
+PWA
+
+* https://calara.software/como-criar-um-pwa-com-angular/
+* https://medium.com/ngconf/angular-pwa-install-and-configure-858dd8e9fb07
+
+SQLITE E SQUELIZE
+
+* https://medium.com/@mikess_dev/creating-a-nest-js-project-with-sequelize-and-sqlite-870d29908a8c
+
+
+CACHE BUSTING
+
+* https://blog.stackademic.com/cache-busting-in-angular-378d1877302b
+
+UPDATE NOTIFICATION
+
+* https://senoritadeveloper.medium.com/notify-users-with-the-new-version-of-your-angular-app-56813b24d8e3
+
+
