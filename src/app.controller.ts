@@ -117,10 +117,52 @@ export class AppController {
     const org = `wertek`;
     const bucket = `solarmonitor`;
 
-    const writeClient = client.getWriteApi(org, bucket, 'ns');
+    const writeClient = client.getWriteApi(org, bucket, 'ms');
+
+    const fluxQuery = `from(bucket: "solarmonitor")
+	  |> range(start: -48h)
+	  |> filter(fn: (r) => r._measurement == "powerdata" )
+	  |> last()
+	  |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")`;
+
+    const queryClient = client.getQueryApi(org);
+
+    const last = await queryClient.collectRows(fluxQuery, (row, tableMeta) =>
+      tableMeta.toObject(row),
+    );
+
+    let last_epa_c = 0;
+    let last_epb_c = 0;
+    let last_epc_c = 0;
+    let last_ept_c = 0;
+    let last_epa_g = 0;
+    let last_epb_g = 0;
+    let last_epc_g = 0;
+    let last_ept_g = 0;
+
+    if (last.length > 0) {
+      last_epa_c = last[0]['epa_c'] ?? 0;
+      last_epb_c = last[0]['epb_c'] ?? 0;
+      last_epc_c = last[0]['epc_c'] ?? 0;
+      last_ept_c = last[0]['ept_c'] ?? 0;
+      last_epa_g = last[0]['epa_g'] ?? 0;
+      last_epb_g = last[0]['epb_g'] ?? 0;
+      last_epc_g = last[0]['epc_g'] ?? 0;
+      last_ept_g = last[0]['ept_g'] ?? 0;
+    }
+
+    const epa_c_period = dataF.epa_c - last_epa_c;
+    const epb_c_period = dataF.epb_c - last_epb_c;
+    const epc_c_period = dataF.epc_c - last_epc_c;
+    const ept_c_period = dataF.ept_c - last_ept_c;
+    const epa_g_period = dataF.epa_g - last_epa_g;
+    const epb_g_period = dataF.epb_g - last_epb_g;
+    const epc_g_period = dataF.epc_g - last_epc_g;
+    const ept_g_period = dataF.ept_g - last_ept_g;
 
     const point = new Point('powerdata')
-      .tag('user', 'user_identity')
+      .tag('user', 'ricardo.ara.silva@gmail.com')
+      .tag('version', '1.0.0')
       .floatField('pa', dataF.pa)
       .floatField('pb', dataF.pb)
       .floatField('pc', dataF.pc)
@@ -160,7 +202,15 @@ export class AppController {
       .floatField('tpsd', dataF.tpsd)
       .floatField('yuaub', dataF.yuaub)
       .floatField('yuauc', dataF.yuauc)
-      .floatField('yubuc', dataF.yubuc);
+      .floatField('yubuc', dataF.yubuc)
+      .floatField('epa_c_period', epa_c_period)
+      .floatField('epb_c_period', epb_c_period)
+      .floatField('epc_c_period', epc_c_period)
+      .floatField('ept_c_period', ept_c_period)
+      .floatField('epa_g_period', epa_g_period)
+      .floatField('epb_g_period', epb_g_period)
+      .floatField('epc_g_period', epc_g_period)
+      .floatField('ept_g_period', ept_g_period);
 
     writeClient.writePoint(point);
     await writeClient.flush();
